@@ -357,8 +357,20 @@ struct wlr_xwayland_surface *wlr_xwayland_surface_try_from_wlr_surface(
  * Globally Active input model (see wlr_xwayland_icccm_input_model()) than
  * calling wlr_xwayland_surface_activate() unconditionally, since there is no
  * reliable way to know in advance whether these windows want to be focused.
+ *
+ * The WM_TAKE_FOCUS message uses XCB_CURRENT_TIME. When the timestamp of the
+ * event which caused the focus offer is known, use
+ * wlr_xwayland_surface_offer_focus_with_timestamp() instead.
  */
 void wlr_xwayland_surface_offer_focus(struct wlr_xwayland_surface *xsurface);
+
+/**
+ * Like wlr_xwayland_surface_offer_focus(), but use the supplied X11 timestamp
+ * in the WM_TAKE_FOCUS message.
+ */
+void wlr_xwayland_surface_offer_focus_with_timestamp(
+	struct wlr_xwayland_surface *xsurface,
+	xcb_timestamp_t timestamp);
 
 void wlr_xwayland_surface_ping(struct wlr_xwayland_surface *surface);
 
