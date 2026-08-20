@@ -439,4 +439,15 @@ bool wlr_xwayland_surface_fetch_icon(
 xcb_connection_t *wlr_xwayland_get_xwm_connection(
 	struct wlr_xwayland *wlr_xwayland);
 
+/**
+ * Wait for Xwayland to process all X11 requests issued by the XWM connection.
+ *
+ * This function performs a blocking X11 roundtrip. It should only be used when
+ * ordering X11 requests against events sent over the Wayland connection is
+ * required.
+ *
+ * Returns false if the XWM is unavailable or the roundtrip failed.
+ */
+bool wlr_xwayland_sync(struct wlr_xwayland *wlr_xwayland);
+
 #endif

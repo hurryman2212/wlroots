@@ -2912,6 +2912,23 @@ xcb_connection_t *wlr_xwayland_get_xwm_connection(
 	return wlr_xwayland->xwm ? wlr_xwayland->xwm->xcb_conn : NULL;
 }
 
+bool wlr_xwayland_sync(struct wlr_xwayland *wlr_xwayland) {
+	xcb_connection_t *xcb_conn = wlr_xwayland_get_xwm_connection(wlr_xwayland);
+	if (!xcb_conn) {
+		return false;
+	}
+
+	xcb_get_input_focus_cookie_t cookie = xcb_get_input_focus(xcb_conn);
+	xcb_get_input_focus_reply_t *reply =
+		xcb_get_input_focus_reply(xcb_conn, cookie, NULL);
+	if (!reply) {
+		return false;
+	}
+
+	free(reply);
+	return true;
+}
+
 void xwm_schedule_flush(struct wlr_xwm *xwm) {
 	struct pollfd pollfd = {
 		.fd = xcb_get_file_descriptor(xwm->xcb_conn),
