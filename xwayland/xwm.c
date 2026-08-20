@@ -450,7 +450,9 @@ static void xwm_set_focused_window(struct wlr_xwm *xwm,
 	}
 }
 
-void wlr_xwayland_surface_offer_focus(struct wlr_xwayland_surface *xsurface) {
+void wlr_xwayland_surface_offer_focus_with_timestamp(
+		struct wlr_xwayland_surface *xsurface,
+		xcb_timestamp_t timestamp) {
 	if (!xsurface || xsurface->override_redirect) {
 		return;
 	}
@@ -465,10 +467,15 @@ void wlr_xwayland_surface_offer_focus(struct wlr_xwayland_surface *xsurface) {
 
 	xcb_client_message_data_t message_data = { 0 };
 	message_data.data32[0] = xwm->atoms[WM_TAKE_FOCUS];
-	message_data.data32[1] = XCB_TIME_CURRENT_TIME;
+	message_data.data32[1] = timestamp;
 	xwm_send_wm_message(xsurface, &message_data, XCB_EVENT_MASK_NO_EVENT);
 
 	xcb_flush(xwm->xcb_conn);
+}
+
+void wlr_xwayland_surface_offer_focus(struct wlr_xwayland_surface *xsurface) {
+	wlr_xwayland_surface_offer_focus_with_timestamp(
+		xsurface, XCB_TIME_CURRENT_TIME);
 }
 
 static void xwm_surface_activate(struct wlr_xwm *xwm,
